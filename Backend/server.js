@@ -11,7 +11,7 @@ const app = express();
  
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://chipper-tapioca-aaab67.netlify.app'
+  '"https://budgetwise-rushabhpal.netlify.app"'
 ];
 app.use((req, res, next) => {
   console.log('Origin:', req.headers.origin);
