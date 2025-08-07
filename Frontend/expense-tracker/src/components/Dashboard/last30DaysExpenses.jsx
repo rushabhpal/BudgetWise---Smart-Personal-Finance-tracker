@@ -11,18 +11,12 @@ import {
 } from "recharts";
 
 const Last30DaysExpenses = ({ data }) => {
-  // Process real data or fallback to test data
-  const chartData = data?.transactions?.length > 0
-    ? data.transactions.map(t => ({
-        date: moment(t.date).format("MMM D"),
-        amount: Number(t.amount),
-        category: t.category || "Other"
-      }))
-    : [
-        { date: "Aug 1", amount: 400, category: "Test" },
-        { date: "Aug 2", amount: 300, category: "Test" },
-        { date: "Aug 3", amount: 600, category: "Test" }
-      ];
+  const chartData =
+    data?.transactions?.map(t => ({
+      date: moment(t.date).format("MMM D"),
+      amount: Number(t.amount),
+      category: t.category || "Other"
+    })) || [];
 
   return (
     <div className="card col-span-1">
@@ -35,20 +29,21 @@ const Last30DaysExpenses = ({ data }) => {
         )}
       </div>
 
-      <div className="h-[300px] mt-4">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="amount" fill="#8884d8" />
-          </BarChart>
-        </ResponsiveContainer>
-
-  
-
-      </div>
+      {chartData.length > 0 ? (
+        <div className="h-[300px] mt-4">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="amount" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <p className="text-sm text-gray-400 mt-4">No expense data to display.</p>
+      )}
     </div>
   );
 };
