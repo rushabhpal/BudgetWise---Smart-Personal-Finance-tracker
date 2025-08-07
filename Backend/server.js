@@ -11,18 +11,15 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 
-
 const allowedOrigins = [
   'http://localhost:5173',
   'https://budgetwise-rushabhpal.netlify.app'
 ];
 
-
 app.use((req, res, next) => {
   console.log('Incoming Origin:', req.headers.origin);
   next();
 });
-
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -37,7 +34,6 @@ app.use(cors({
   credentials: true
 }));
 
-
 app.options('*', cors());
 
 // Middleware
@@ -46,11 +42,22 @@ app.use(express.json());
 // Connect DB
 connectDB();
 
-// Routes
+// API Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/income', incomeRoutes);
 app.use('/api/v1/expense', expenseRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
+
+// Serve frontend in production
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, 'frontend', 'dist');
+  app.use(express.static(frontendPath));
+
+  // Use (.*) instead of * to avoid Express 5 path-to-regexp error
+  app.get('(.*)', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+}
 
 // Start server
 const PORT = process.env.PORT || 5000;
